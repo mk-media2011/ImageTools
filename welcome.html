@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Save Image As</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --grid: rgba(14, 165, 233, 0.1);
+      --text: #1e293b;
+      --text-dim: #64748b;
+      --border: #f1f5f9;
+      --item-hover: #f8fafc;
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --grid: rgba(14, 165, 233, 0.05);
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+      --border: #334155;
+      --item-hover: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      transition: background-color 0.3s ease;
+      background-image: 
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .header-badge {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      padding: 8px 16px;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .moon-icon {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+
+    .moon-icon:hover { transform: scale(1.05); }
+
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 60px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-align: center;
+      letter-spacing: -0.04em;
+    }
+
+    p.tagline {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .setup-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 30px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .setup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .item:hover {
+      border-color: var(--primary);
+      background: var(--item-hover);
+    }
+
+    .icon-container {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      transition: all 0.3s;
+    }
+
+    .item-info { flex: 1; }
+    .item-title { font-size: 1rem; font-weight: 600; }
+    .item-desc { font-size: 0.8rem; color: var(--text-dim); }
+
+    .check-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .item.active .check-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .item.active .check-circle svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .check-circle svg {
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s;
+    }
+
+    .footer-actions {
+      margin-top: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 18px 60px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover { transform: scale(1.05); }
+
+    .lang-selector {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 100px;
+      color: var(--text);
+      font-family: inherit;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    @media (max-width: 800px) {
+      .setup-columns { grid-template-columns: 1fr; }
+      .container { padding: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-badge">
+    <img src="icons/icon.svg" width="20" height="20" alt="Icon">
+    Image Tools
+  </div>
+
+  <div class="moon-icon" id="theme-toggle">
+    <svg id="moon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </div>
+
+  <div class="container">
+    <div class="setup-columns">
+      <div>
+        <div class="section-title">Image Formats</div>
+        <div class="setup-list" id="formats-grid"></div>
+      </div>
+      <div>
+        <div class="section-title">Search Engines</div>
+        <div class="setup-list" id="search-grid"></div>
+      </div>
+      <div>
+        <div class="section-title">Share Options</div>
+        <div class="setup-list" id="shares-grid"></div>
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn" id="finish-btn">Get Started</button>
+    </div>
+  </div>
+
+  <script src="welcome.js"></script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Tools - Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dim: rgba(14, 165, 233, 0.1);
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-dim: #64748b;
+      --border: #e2e8f0;
+      --grid: rgba(14, 165, 233, 0.05);
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+      --border: #334155;
+      --grid: rgba(14, 165, 233, 0.03);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .navbar {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h1 { font-size: 2rem; margin-bottom: 8px; }
+    .tagline { color: var(--text-dim); margin-bottom: 40px; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-row:last-child { border-bottom: none; }
+
+    .setting-info { flex: 1; padding-right: 20px; }
+    .setting-title { font-weight: 600; margin-bottom: 4px; }
+    .setting-desc { font-size: 0.9rem; color: var(--text-dim); }
+
+    input[type="text"], input[type="number"] {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      width: 200px;
+    }
+
+    input[type="range"] {
+      width: 200px;
+      accent-color: var(--primary);
+    }
+
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px; width: 20px;
+      left: 4px; bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    .footer {
+      margin-top: auto;
+      padding: 40px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    .order-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      gap: 12px;
+      cursor: grab;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .order-item:active {
+      cursor: grabbing;
+    }
+
+    .order-item.dragging {
+      opacity: 0.4;
+      background: var(--primary-dim);
+      border: 2px dashed var(--primary);
+    }
+
+    .order-item.drag-over {
+      border: 2px solid var(--primary);
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+    }
+
+    .drag-handle {
+      display: flex;
+      align-items: center;
+      color: var(--text-dim);
+      cursor: grab;
+      margin-right: 4px;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .order-item .icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle-settings {
+      width: 40px;
+      height: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-settings:hover {
+      transform: scale(1.05);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .setting-detail-bullets {
+      margin-top: 8px;
+      margin-left: 0;
+      padding-left: 18px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .setting-detail-bullets li {
+      list-style-type: disc;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">
+      <img src="icons/icon.svg" width="24" height="24" alt="Icon">
+      Image Tools
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div id="theme-status" style="font-size: 0.9rem; font-weight: 600;">Light Mode Active</div>
+      <div class="theme-toggle-settings" id="theme-toggle">
+        <svg id="moon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <h1>Advanced Settings</h1>
+    <p class="tagline">Fine-tune your image processing and saving workflow.</p>
+
+    <!-- CARD 1: OUTPUT CONVERSION & QUALITY OPTIONS -->
+    <div class="card">
+      <div class="section-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <h2>Output Conversion Options</h2>
+      </div>
+      
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title">Image Quality Compression</div>
+          <div class="setting-desc">
+            Adjust the slider to configure the export compression ratio.
+            <ul class="setting-detail-bullets">
+              <li>Applies only to lossy formats: <strong>JPEG, WebP, and AVIF</strong>.</li>
+              <li><strong>Higher quality (85%-100%):</strong> Visually flawless, larger file sizes.</li>
+              <li><strong>Balanced compression (70%-80%):</strong> Tiny footprint, highly optimized for online storage.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; min-width: 250px; justify-content: flex-end;">
+          <input type="range" id="quality" min="10" max="100" value="92">
+          <span id="quality-val" style="font-weight: 700; width: 45px; text-align: right;">92%</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title">Filename Prefix Rule</div>
+          <div class="setting-desc">
+            Define a custom string to prepend to every saved image's name.
+            <ul class="setting-detail-bullets">
+              <li>Helps categorize images instantly when doing bulk downloads (e.g., <code>Project_A_</code>).</li>
+              <li>If the original image was named <code>banner.jpg</code>, saving with prefix <code>Work_</code> results in <code>Work_banner.jpg</code>.</li>
+            </ul>
+          </div>
+        </div>
+        <input type="text" id="prefix" placeholder="e.g. Work_">
+      </div>
+    </div>
+
+    <!-- CARD 2: CONTEXT MENU REORDERING -->
+    <div class="card">
+      <div class="section-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
+        <h2>Menu Ordering & Priority</h2>
+      </div>
+      <p class="setting-desc" style="margin-bottom: 20px;">
+        Prioritize your workflow items! Drag and drop items to arrange how they appear in your right-click context menu.
+      </p>
+
+<div id="order-list" class="order-list"></div>
+    </div>
+
+    <!-- CARD 3: FILE SYSTEMS & INTERFACE -->
+    <div class="card">
+      <div class="section-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+        <h2>Folder & Interface Settings</h2>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title">Group Under Root Menu</div>
+          <div class="setting-desc">
+            Choose how context actions are displayed.
+            <ul class="setting-detail-bullets">
+              <li><strong>Enabled (Recommended):</strong> Groups formats, searches, and sharing options under a clean <code>Image Tools</code> parent menu.</li>
+              <li><strong>Disabled:</strong> Displays active formats/searches straight on the main right-click menu for lightning-fast access.</li>
+            </ul>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="group-menu">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-title">Subfolder Download Saving</div>
+          <div class="setting-desc">
+            Organize downloaded images directly inside a subfolder.
+            <ul class="setting-detail-bullets">
+              <li>Saves folders inside Chrome's main <strong>Downloads</strong> directory (e.g., <code>Downloads/Saved Images/</code>).</li>
+              <li>Subfolders are created dynamically. Leave blank to save directly into the root Downloads directory.</li>
+            </ul>
+          </div>
+        </div>
+        <input type="text" id="subfolder" placeholder="e.g. Saved Images">
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Image Tools v1.1.0 &bull; Designed with absolute focus on visual aesthetics and user speed.
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
